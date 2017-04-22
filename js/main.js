@@ -28,6 +28,9 @@ PlayState._handleCollisions = function () {
   this.game.physics.arcade.collide(this.god, this.lumberjackArea,  () => {
     console.log('god vs lumberjack');
   });
+
+  this.game.physics.arcade.collide(this.wrath.bullets, this.lumberjack,  this.onBulletVsCharacter, null, this);
+  this.game.physics.arcade.collide(this.wrath.bullets, this.sinner,  this.onBulletVsCharacter, null, this);
 }
 
 var facing
@@ -55,7 +58,7 @@ PlayState._handleInput = function () {
   if (this.keys.wrath.isDown) {
     let direction = 0
     if (facing === 'right') {
-        direction = -1
+        direction = 960
     }
 
     this.wrath.fire(null, direction, this.god.position.y)
@@ -96,6 +99,12 @@ PlayState._spawnWrath = function() {
   this.wrath.trackSprite(this.god, 0, 0, true)
   this.wrath.bulletSpeed = 600;
 
+}
+
+PlayState.onBulletVsCharacter = function(character, bullet){
+  character.isDead = true
+  character.kill()
+  bullet.kill()
 }
 // load
 
