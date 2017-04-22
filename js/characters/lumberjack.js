@@ -12,7 +12,7 @@ Lumberjack.prototype = Object.create(Phaser.Sprite.prototype)
 Lumberjack.prototype.constructor = Lumberjack
 
 Lumberjack.prototype.goFish = function (direction) {
-  this.happy = true
+  this.isHappy = true
   this.game.add.tween(this).to( { x: '-150' }, 1500, Phaser.Easing.Elastic.InOut, true)
 }
 

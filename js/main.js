@@ -81,6 +81,14 @@ PlayState._handleCollisions = function () {
 
   // melt snow
   this.game.physics.arcade.collide(this.wrath.bullets, this.snow,  this.onBulletVsSnow, null, this);
+
+
+  this.game.physics.arcade.collide(this.axe, this.world)
+
+  this.game.physics.arcade.collide(this.god, this.axe,  this.onGodVsAxe, null, this)
+
+  // cut down tree
+  this.game.physics.arcade.overlap(this.god, this.tree, this.onGodVsTree, null, this);
 }
 
 var facing
@@ -158,28 +166,40 @@ PlayState._spawnAxe = function() {
   this.axe = this.bgDecoration.create(850, 1500, 'axe')
   this.game.physics.enable(this.axe);
 
-  this.game.physics.arcade.collide(this.axe, this.world)
 
-  this.game.physics.arcade.collide(this.god, this.axe,  this.onGodVsAxe, null, this)
 }
 
 PlayState.onBulletVsCharacter = function(character, bullet){
   character.isDead = true
   character.kill()
   bullet.kill()
+  if(this.lumberjack.isDead) {
+    this._spawnAxe()
+  }
 }
 
 PlayState.onBulletVsSnow = function(character, bullet){
   this.onBulletVsCharacter(character, bullet)
-  console.log('melt snow');
+
   this.water.visible = true
-  this.lumberjack.goFish()
-  this._spawnAxe()
+  if(!this.lumberjack.isDead) {
+    this.lumberjack.goFish()
+    this._spawnAxe()
+  }
 }
 
 PlayState.onGodVsAxe = function(god, axe){
   god.hasAxe = true
   axe.kill()
+}
+
+PlayState.onGodVsTree = function(god, tree) {
+    if(god.hasAxe) {
+      this.keys.action.onDown.add(function(){
+        this.tree.kill()
+        this.sinner.isHappy = true
+      }, this)
+    }
 }
 
 // load
