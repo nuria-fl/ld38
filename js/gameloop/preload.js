@@ -8,6 +8,7 @@ const preload = function () {
   this.game.load.image('platform', 'images/platform.png')
   this.game.load.image('tree', 'images/tree.png')
   this.game.load.image('cat', 'images/cat.png')
+  this.game.load.image('world', 'images/world.png')
 }
 
 module.exports = preload

@@ -18,13 +18,21 @@ const PlayState = {
 PlayState._loadLevel = function (data) {
   this.bgDecoration = this.game.add.group();
 
+  this.world = this.bgDecoration.create(10, 1560, 'world');
+  this.game.physics.enable(this.world);
+  this.world.body.allowGravity = false;
+  this.world.body.immovable = true;
+
   this.platform = this.bgDecoration.create(50, 1010, 'platform');
   this.game.physics.enable(this.platform);
-  this.platform.body.immovable = true;
   this.platform.body.allowGravity = false;
+  this.platform.body.immovable = true;
 
   this.tree = this.bgDecoration.create(100, 700, 'tree');
   this.game.physics.enable(this.tree);
+
+  this.cat = this.bgDecoration.create(150, 600, 'cat');
+  this.game.physics.enable(this.cat);
 
   this._spawnCharacters()
   this._spawnWrath()
@@ -34,6 +42,10 @@ PlayState._loadLevel = function (data) {
 PlayState._handleCollisions = function () {
   this.game.physics.arcade.collide(this.platform, this.sinner)
   this.game.physics.arcade.collide(this.platform, this.tree)
+  this.game.physics.arcade.collide(this.platform, this.cat)
+  this.game.physics.arcade.collide(this.tree, this.cat)
+  this.game.physics.arcade.collide(this.lumberjack, this.world)
+
   this.game.physics.arcade.collide(this.god, this.sinnerArea, () => {
     if(!this.sinner.isDead) {
       console.log('god vs sinner');
@@ -45,7 +57,8 @@ PlayState._handleCollisions = function () {
     }
   });
 
-  this.game.physics.arcade.collide(this.wrath.bullets, this.lumberjack,  this.onBulletVsCharacter, null, this);
+  this.game.physics.arcade.collide(this.wrath.bullets, this.lumberjack, this.onBulletVsCharacter, null, this);
+  this.game.physics.arcade.collide(this.wrath.bullets, this.cat,  this.onBulletVsCharacter, null, this);
   this.game.physics.arcade.collide(this.wrath.bullets, this.sinner,  this.onBulletVsCharacter, null, this);
 }
 
@@ -82,31 +95,33 @@ PlayState._handleInput = function () {
 }
 
 PlayState._spawnCharacters = function () {
-  // spawn god
-  this.god = new God(this.game, 450, 150)
-  this.game.add.existing(this.god)
-  this.camera.follow(this.god)
-  this.god.body.allowGravity = false;
-
   // spawn lumberjack
-  this.lumberjack = new Lumberjack(this.game, 750, 1700)
+  this.lumberjack = new Lumberjack(this.game, 750, 1500)
   this.game.add.existing(this.lumberjack)
 
   // spawn sinner
   this.sinner = new Sinner(this.game, 350, 900)
   this.game.add.existing(this.sinner)
+
+  // spawn god
+  this.god = new God(this.game, 450, 150)
+  this.game.add.existing(this.god)
+  this.camera.follow(this.god)
+  this.god.body.allowGravity = false
 }
 
 PlayState._spawnCharacterAreas = function() {
-  this.sinnerArea = this.game.add.sprite(150, 900, 'interactArea');
+  this.sinnerArea = this.game.add.sprite(350, 950, 'interactArea');
   this.sinnerArea.anchor.set(0.5, 0.5)
   this.game.physics.enable(this.sinnerArea);
   this.sinnerArea.body.immovable = true;
+  this.sinnerArea.body.allowGravity = false;
 
-  this.lumberjackArea = this.game.add.sprite(750, 1700, 'interactArea');
+  this.lumberjackArea = this.game.add.sprite(750, 1500, 'interactArea');
   this.lumberjackArea.anchor.set(0.5, 0.5)
   this.game.physics.enable(this.lumberjackArea);
   this.lumberjackArea.body.immovable = true;
+  this.lumberjackArea.body.allowGravity = false;
 }
 
 PlayState._spawnWrath = function() {
