@@ -133,7 +133,7 @@ PlayState._spawnCharacters = function () {
   this.game.add.existing(this.sinner)
 
   // spawn god
-  this.god = new God(this.game, 450, 1500)
+  this.god = new God(this.game, 450, 150)
   this.game.add.existing(this.god)
   this.camera.follow(this.god)
   this.god.body.allowGravity = false
