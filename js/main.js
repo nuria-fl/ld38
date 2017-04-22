@@ -3,6 +3,8 @@ const preload = require('./gameloop/preload')
 const create = require('./gameloop/create')
 const update = require('./gameloop/update')
 const God = require('./characters/god')
+const Sinner = require('./characters/sinner')
+const Lumberjack = require('./characters/lumberjack')
 
 const PlayState = {
   init,
@@ -42,10 +44,18 @@ PlayState._handleInput = function () {
 }
 
 PlayState._spawnCharacters = function (data) {
-    // spawn god
-  this.god = new God(this.game, 150, 150)
+  // spawn god
+  this.god = new God(this.game, 450, 150)
   this.game.add.existing(this.god)
   this.camera.follow(this.god)
+
+  // spawn lumberjack
+  this.lumberjack = new Lumberjack(this.game, 750, 1700)
+  this.game.add.existing(this.lumberjack)
+
+  // spawn sinner
+  this.sinner = new Sinner(this.game, 150, 900)
+  this.game.add.existing(this.sinner)
 }
 
 // load
