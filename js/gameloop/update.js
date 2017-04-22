@@ -3,15 +3,15 @@ module.exports = function () {
   this._handleInput()
 
   if(this.lumberjack.isDead && this.sinner.isDead) {
-    console.log('end game with evil god status');
+    this.game.state.start('end', false, false, 'evil')
   }
 
   if(this.lumberjack.isHappy && this.sinner.isHappy) {
-    console.log('end game with awesome god status');
+    this.game.state.start('end', false, false, 'awesome')
   }
 
   if((this.lumberjack.isHappy && this.sinner.isDead) ||
      (this.lumberjack.isDead && this.sinner.isHappy)) {
-    console.log('end game with meh god status');
+    this.game.state.start('end', false, false, 'regular')
   }
 }
