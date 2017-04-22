@@ -16,17 +16,33 @@ const PlayState = {
 // Playstate functions
 
 PlayState._loadLevel = function (data) {
+  this.bgDecoration = this.game.add.group();
+
+  this.platform = this.bgDecoration.create(50, 1010, 'platform');
+  this.game.physics.enable(this.platform);
+  this.platform.body.immovable = true;
+  this.platform.body.allowGravity = false;
+
+  this.tree = this.bgDecoration.create(100, 700, 'tree');
+  this.game.physics.enable(this.tree);
+
   this._spawnCharacters()
   this._spawnWrath()
   this._spawnCharacterAreas()
 }
 
 PlayState._handleCollisions = function () {
+  this.game.physics.arcade.collide(this.platform, this.sinner)
+  this.game.physics.arcade.collide(this.platform, this.tree)
   this.game.physics.arcade.collide(this.god, this.sinnerArea, () => {
-    console.log('god vs sinner');
+    if(!this.sinner.isDead) {
+      console.log('god vs sinner');
+    }
   });
   this.game.physics.arcade.collide(this.god, this.lumberjackArea,  () => {
-    console.log('god vs lumberjack');
+    if(!this.lumberjack.isDead) {
+      console.log('god vs lumberjack');
+    }
   });
 
   this.game.physics.arcade.collide(this.wrath.bullets, this.lumberjack,  this.onBulletVsCharacter, null, this);
@@ -70,13 +86,14 @@ PlayState._spawnCharacters = function () {
   this.god = new God(this.game, 450, 150)
   this.game.add.existing(this.god)
   this.camera.follow(this.god)
+  this.god.body.allowGravity = false;
 
   // spawn lumberjack
   this.lumberjack = new Lumberjack(this.game, 750, 1700)
   this.game.add.existing(this.lumberjack)
 
   // spawn sinner
-  this.sinner = new Sinner(this.game, 150, 900)
+  this.sinner = new Sinner(this.game, 350, 900)
   this.game.add.existing(this.sinner)
 }
 
@@ -97,8 +114,8 @@ PlayState._spawnWrath = function() {
   this.wrath.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS
 
   this.wrath.trackSprite(this.god, 0, 0, true)
-  this.wrath.bulletSpeed = 600;
-
+  this.wrath.bulletSpeed = 600
+  this.wrath.bulletGravity.y = -1000
 }
 
 PlayState.onBulletVsCharacter = function(character, bullet){

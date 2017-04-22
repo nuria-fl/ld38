@@ -9,4 +9,6 @@ module.exports = function (data) {
   })
 
   this.game.renderer.renderSession.roundPixels = true
+
+  this.game.physics.arcade.gravity.y = 1000
 }
