@@ -4,7 +4,8 @@ module.exports = function (data) {
     right: Phaser.KeyCode.RIGHT,
     up: Phaser.KeyCode.UP,
     down: Phaser.KeyCode.DOWN,
-    action: Phaser.KeyCode.SPACEBAR
+    action: Phaser.KeyCode.SPACEBAR,
+    wrath: Phaser.KeyCode.W
   })
 
   this.game.renderer.renderSession.roundPixels = true
