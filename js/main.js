@@ -18,10 +18,26 @@ const PlayState = {
 PlayState._loadLevel = function (data) {
   this.bgDecoration = this.game.add.group();
 
+  this.mountain = this.bgDecoration.create(100, 1220, 'mountain');
+  this.game.physics.enable(this.mountain);
+  this.mountain.body.allowGravity = false;
+  this.mountain.body.immovable = true;
+
+  this.snow = this.bgDecoration.create(300, 1220, 'snow');
+  this.game.physics.enable(this.snow);
+  this.snow.body.allowGravity = false;
+  this.snow.body.immovable = true;
+
   this.world = this.bgDecoration.create(10, 1560, 'world');
   this.game.physics.enable(this.world);
   this.world.body.allowGravity = false;
   this.world.body.immovable = true;
+
+  this.water = this.bgDecoration.create(348, 1567, 'water');
+  this.game.physics.enable(this.water);
+  this.water.body.allowGravity = false;
+  this.water.body.immovable = true;
+  this.water.visible = false;
 
   this.platform = this.bgDecoration.create(50, 1010, 'platform');
   this.game.physics.enable(this.platform);
@@ -46,20 +62,25 @@ PlayState._handleCollisions = function () {
   this.game.physics.arcade.collide(this.tree, this.cat)
   this.game.physics.arcade.collide(this.lumberjack, this.world)
 
-  this.game.physics.arcade.collide(this.god, this.sinnerArea, () => {
+  // surrounding characters areas
+  this.game.physics.arcade.overlap(this.god, this.sinnerArea, () => {
     if(!this.sinner.isDead) {
       console.log('god vs sinner');
     }
   });
-  this.game.physics.arcade.collide(this.god, this.lumberjackArea,  () => {
+  this.game.physics.arcade.overlap(this.god, this.lumberjackArea,  () => {
     if(!this.lumberjack.isDead) {
       console.log('god vs lumberjack');
     }
   });
 
+  // bullets
   this.game.physics.arcade.collide(this.wrath.bullets, this.lumberjack, this.onBulletVsCharacter, null, this);
   this.game.physics.arcade.collide(this.wrath.bullets, this.cat,  this.onBulletVsCharacter, null, this);
   this.game.physics.arcade.collide(this.wrath.bullets, this.sinner,  this.onBulletVsCharacter, null, this);
+
+  // melt snow
+  this.game.physics.arcade.collide(this.wrath.bullets, this.snow,  this.onBulletVsSnow, null, this);
 }
 
 var facing
@@ -96,7 +117,7 @@ PlayState._handleInput = function () {
 
 PlayState._spawnCharacters = function () {
   // spawn lumberjack
-  this.lumberjack = new Lumberjack(this.game, 750, 1500)
+  this.lumberjack = new Lumberjack(this.game, 850, 1500)
   this.game.add.existing(this.lumberjack)
 
   // spawn sinner
@@ -104,20 +125,20 @@ PlayState._spawnCharacters = function () {
   this.game.add.existing(this.sinner)
 
   // spawn god
-  this.god = new God(this.game, 450, 150)
+  this.god = new God(this.game, 450, 1500)
   this.game.add.existing(this.god)
   this.camera.follow(this.god)
   this.god.body.allowGravity = false
 }
 
 PlayState._spawnCharacterAreas = function() {
-  this.sinnerArea = this.game.add.sprite(350, 950, 'interactArea');
+  this.sinnerArea = this.bgDecoration.create(350, 950, 'interactArea')
   this.sinnerArea.anchor.set(0.5, 0.5)
   this.game.physics.enable(this.sinnerArea);
   this.sinnerArea.body.immovable = true;
   this.sinnerArea.body.allowGravity = false;
 
-  this.lumberjackArea = this.game.add.sprite(750, 1500, 'interactArea');
+  this.lumberjackArea = this.bgDecoration.create(850, 1500, 'interactArea');
   this.lumberjackArea.anchor.set(0.5, 0.5)
   this.game.physics.enable(this.lumberjackArea);
   this.lumberjackArea.body.immovable = true;
@@ -133,11 +154,34 @@ PlayState._spawnWrath = function() {
   this.wrath.bulletGravity.y = -1000
 }
 
+PlayState._spawnAxe = function() {
+  this.axe = this.bgDecoration.create(850, 1500, 'axe')
+  this.game.physics.enable(this.axe);
+
+  this.game.physics.arcade.collide(this.axe, this.world)
+
+  this.game.physics.arcade.collide(this.god, this.axe,  this.onGodVsAxe, null, this)
+}
+
 PlayState.onBulletVsCharacter = function(character, bullet){
   character.isDead = true
   character.kill()
   bullet.kill()
 }
+
+PlayState.onBulletVsSnow = function(character, bullet){
+  this.onBulletVsCharacter(character, bullet)
+  console.log('melt snow');
+  this.water.visible = true
+  this.lumberjack.goFish()
+  this._spawnAxe()
+}
+
+PlayState.onGodVsAxe = function(god, axe){
+  god.hasAxe = true
+  axe.kill()
+}
+
 // load
 
 window.onload = function () {
