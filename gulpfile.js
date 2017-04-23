@@ -43,8 +43,7 @@ gulp.task('build', ['js'])
 gulp.task('dist', ['build'], function () {
   var rawFiles = gulp.src([
     'index.html',
-    'images/**/*',
-    'audio/**/*'
+    'assets/**/*'
   ], { cwd: './', base: './' })
     .pipe(gulp.dest('./dist/'))
 

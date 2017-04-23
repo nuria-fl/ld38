@@ -1,7 +1,7 @@
 // Endstate
 module.exports = {
   preload: function() {
-    this.game.load.spritesheet('button', 'images/button.png', 244, 59);
+    this.game.load.spritesheet('button', 'assets/images/button.png', 244, 59);
   },
   init: function (score) {
     this.game.score = score
@@ -11,6 +11,7 @@ module.exports = {
     const textStyle = {
       font: '40px Amatica SC',
       fill: '#fff',
+      fontWeight: 'bold',
       boundsAlignH: 'center',
       boundsAlignV: 'middle'
     }

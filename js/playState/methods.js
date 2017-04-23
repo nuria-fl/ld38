@@ -108,7 +108,10 @@ PlayState._handleInput = function () {
       direction = 960
     }
 
-    this.wrath.fire(null, direction, this.god.position.y)
+    const fire = this.wrath.fire(null, direction, this.god.position.y)
+    if(fire){
+      this.sfx.wrath.play();
+    }
   }
 }
 
@@ -160,6 +163,7 @@ PlayState.onBulletVsCharacter = function (character, bullet) {
   character.isDead = true
   character.kill()
   bullet.kill()
+  this.sfx.death.play()
   if (this.lumberjack.isDead) {
     this._spawnAxe()
   }
@@ -177,14 +181,20 @@ PlayState.onBulletVsSnow = function (character, bullet) {
 
 PlayState.onGodVsAxe = function (god, axe) {
   god.hasAxe = true
+  this.sfx.got.play();
   axe.kill()
 }
 
 PlayState.onGodVsTree = function (god, tree) {
   if (god.hasAxe) {
     this.keys.action.onDown.add(function () {
-      this.tree.kill()
-      this.sinner.isHappy = true
+      const _this = this
+      this.sfx.chop.play(null, 0, 1, true)
+      setTimeout(() => {
+        _this.tree.kill()
+        _this.sinner.isHappy = true
+        this.sfx.chop.stop()
+      }, 1000)
     }, this)
   }
 }
