@@ -12,6 +12,9 @@ PlayState._loadLevel = function (data) {
   this.game.physics.enable(this.mountain)
   this.mountain.body.allowGravity = false
   this.mountain.body.immovable = true
+  this.waterfall = this.bgDecoration.create(100, 1278, 'waterfall')
+  this.waterfall.alpha = 0
+  this.waterfall.animations.add('flowing', [0, 0, 0, 1, 1, 1], 8, true);
 
   this.snow = this.bgDecoration.create(340, 1273, 'snow')
   this.game.physics.enable(this.snow)
@@ -22,17 +25,19 @@ PlayState._loadLevel = function (data) {
   this.game.physics.enable(this.world)
   this.world.body.allowGravity = false
   this.world.body.immovable = true
+  this.bgDecoration.create(10, 1548, 'world-grass')
 
   this.water = this.bgDecoration.create(355, 1566, 'water')
   this.game.physics.enable(this.water)
   this.water.body.allowGravity = false
   this.water.body.immovable = true
-  this.water.visible = false
+  this.water.alpha = 0
 
   this.platform = this.bgDecoration.create(50, 1010, 'platform')
   this.game.physics.enable(this.platform)
   this.platform.body.allowGravity = false
   this.platform.body.immovable = true
+  this.bgDecoration.create(50, 998, 'platform-grass')
 
   this.tree = this.bgDecoration.create(100, 700, 'tree')
   this.game.physics.enable(this.tree)
@@ -156,6 +161,7 @@ PlayState._spawnText = function(data) {
   }
 
   const texts = {
+    start: 'Go down to earth and check how your people are doing',
     help: 'Hold SPACEBAR to interact',
     sinner: 'Oh god, my cat is in that tree\nand I can\'t get her down!',
     lumberjack: 'Oh god, I don\'t wanna be \na lumberjack anymore,\nthere are no trees!\n I want to be a fisherman,\nbut there\'s no water either!'
@@ -163,6 +169,7 @@ PlayState._spawnText = function(data) {
   this.sinnerText = this.game.add.text(0, 0, texts.sinner, textStyle);
   this.lumberjackText = this.game.add.text(0, 0, texts.lumberjack, textStyle);
   this.helpText = this.game.add.text(0, 0, texts.help, textStyle);
+  this.startText = this.game.add.text(0, 0, texts.start, textStyle);
 
   this.sinnerText.setTextBounds(150, 700, 600, 200)
   this.sinnerText.lineSpacing = 1
@@ -176,6 +183,10 @@ PlayState._spawnText = function(data) {
   this.helpText.lineSpacing = 1
   this.helpText.visible = false
   this.helpText.fixedToCamera = true
+
+  this.startText.setTextBounds(0, 550, 960, 50)
+  this.startText.lineSpacing = 1
+  this.startText.fixedToCamera = true
 }
 
 PlayState._spawnWrath = function () {
@@ -204,8 +215,10 @@ PlayState.onBulletVsCharacter = function (character, bullet) {
 
 PlayState.onBulletVsSnow = function (character, bullet) {
   this.onBulletVsCharacter(character, bullet)
-
-  this.water.visible = true
+  this.game.add.tween(this.waterfall).to( { alpha: 1 }, 1000, Phaser.Easing.Linear.None, true)
+  this.game.add.tween(this.water).to( { alpha: 1 }, 2000, Phaser.Easing.Linear.None, true)
+  // this.water.alpha = 1
+  this.waterfall.animations.play('flowing')
   if (!this.lumberjack.isDead) {
     this.lumberjack.goFish()
     this._spawnAxe()

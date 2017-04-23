@@ -5,6 +5,10 @@ module.exports = function () {
   this._handleCollisions()
   this._handleInput()
 
+  if(this.god.position.y > 300) {
+    this.startText.kill()
+  }
+
   if (this.lumberjack.isDead && this.sinner.isDead) {
     setTimeout(() => {
       this.game.state.start('end', false, false, 'evil')
