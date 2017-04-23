@@ -13,7 +13,7 @@ Lumberjack.prototype.constructor = Lumberjack
 
 Lumberjack.prototype.goFish = function (direction) {
   this.isHappy = true
-  this.game.add.tween(this).to( { x: '-150' }, 1500, Phaser.Easing.Elastic.InOut, true)
+  this.game.add.tween(this).to({ x: '-150' }, 1500, Phaser.Easing.Elastic.InOut, true)
 }
 
 module.exports = Lumberjack
