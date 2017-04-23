@@ -122,7 +122,7 @@ God.prototype._getAnimationName = function () {
 
 God.prototype.update = function () {
   var animationName = this._getAnimationName();
-  console.log(animationName);
+
   if (this.animations.name !== animationName) {
     this.animations.play(animationName);
   }
@@ -274,6 +274,7 @@ PlayState._loadLevel = function (data) {
   this._spawnCharacters();
   this._spawnWrath();
   this._spawnCharacterAreas();
+  this._spawnText();
 };
 
 PlayState._handleCollisions = function () {
@@ -288,12 +289,13 @@ PlayState._handleCollisions = function () {
   // surrounding characters areas
   this.game.physics.arcade.overlap(this.god, this.sinnerArea, function () {
     if (!_this2.sinner.isDead) {
-      console.log('god vs sinner');
+      _this2.sinnerText.visible = true;
     }
   });
+
   this.game.physics.arcade.overlap(this.god, this.lumberjackArea, function () {
     if (!_this2.lumberjack.isDead) {
-      console.log('god vs lumberjack');
+      _this2.lumberjackText.visible = true;
     }
   });
 
@@ -355,7 +357,7 @@ PlayState._spawnCharacters = function () {
   this.game.add.existing(this.sinner);
 
   // spawn god
-  this.god = new God(this.game, 450, 1500);
+  this.god = new God(this.game, 450, 150);
   this.game.add.existing(this.god);
   this.camera.follow(this.god);
   this.god.body.allowGravity = false;
@@ -373,6 +375,31 @@ PlayState._spawnCharacterAreas = function () {
   this.game.physics.enable(this.lumberjackArea);
   this.lumberjackArea.body.immovable = true;
   this.lumberjackArea.body.allowGravity = false;
+};
+
+PlayState._spawnText = function (data) {
+  var textStyle = {
+    font: '30px Amatica SC',
+    fill: '#58a4b0',
+    fontWeight: 'bold',
+    boundsAlignH: 'center',
+    boundsAlignV: 'middle'
+  };
+
+  var texts = {
+    sinner: 'Oh god, my cat is in that tree\nand I can\'t get her down!',
+    lumberjack: 'Oh god, I don\'t wanna be \na lumberjack anymore,\nthere are no trees!\n I want to be a fisherman,\nbut there\'s no water either!'
+  };
+  this.sinnerText = this.game.add.text(0, 0, texts.sinner, textStyle);
+  this.lumberjackText = this.game.add.text(0, 0, texts.lumberjack, textStyle);
+
+  this.sinnerText.setTextBounds(150, 700, 600, 200);
+  this.sinnerText.lineSpacing = 1;
+  this.sinnerText.visible = false;
+
+  this.lumberjackText.setTextBounds(500, 1150, 600, 300);
+  this.lumberjackText.lineSpacing = 1;
+  this.lumberjackText.visible = false;
 };
 
 PlayState._spawnWrath = function () {
@@ -465,6 +492,8 @@ module.exports = preload;
 'use strict';
 
 module.exports = function () {
+  this.sinnerText.visible = false;
+  this.lumberjackText.visible = false;
   this._handleCollisions();
   this._handleInput();
 
