@@ -1,4 +1,6 @@
 module.exports = function () {
+  this.sinnerText.visible = false
+  this.lumberjackText.visible = false
   this._handleCollisions()
   this._handleInput()
 

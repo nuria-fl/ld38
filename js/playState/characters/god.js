@@ -34,7 +34,7 @@ God.prototype._getAnimationName = function () {
 
 God.prototype.update = function () {
   const animationName = this._getAnimationName();
-  console.log(animationName);
+
   if (this.animations.name !== animationName) {
     this.animations.play(animationName);
   }
