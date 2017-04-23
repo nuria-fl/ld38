@@ -10,6 +10,7 @@ function God (game, x, y) {
 
   this.game.physics.enable(this)
   this.body.collideWorldBounds = true
+  // this.doTween()
 }
 
 // inherit from Phaser.Sprite
@@ -19,6 +20,12 @@ God.prototype.constructor = God
 God.prototype.float = function (x, y) {
   this.x += x * 5
   this.y += y * 5
+}
+
+God.prototype.doTween = function () {
+  this.floatTween = this.game.add.tween(this).to({
+    y: this.position.y - 50
+  }, 1500, Phaser.Easing.Linear.None, true, 0, 0, true).loop(true)
 }
 
 God.prototype._getAnimationName = function () {

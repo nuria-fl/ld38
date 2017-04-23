@@ -57,17 +57,8 @@ PlayState._handleCollisions = function () {
   this.game.physics.arcade.collide(this.lumberjack, this.world)
 
   // surrounding characters areas
-  this.game.physics.arcade.overlap(this.god, this.sinnerArea, () => {
-    if (!this.sinner.isDead && !this.sinner.isHappy) {
-      this.sinnerText.visible = true
-    }
-  })
-
-  this.game.physics.arcade.overlap(this.god, this.lumberjackArea, () => {
-    if (!this.lumberjack.isDead && !this.lumberjack.isHappy) {
-      this.lumberjackText.visible = true
-    }
-  })
+  this.game.physics.arcade.overlap(this.god, this.sinnerArea, this.onGodVsSinner, null, this)
+  this.game.physics.arcade.overlap(this.god, this.lumberjackArea, this.onGodVsLumberjack, null, this)
 
   // bullets
   this.game.physics.arcade.collide(this.wrath.bullets, this.lumberjack, this.onBulletVsCharacter, null, this)
@@ -88,6 +79,10 @@ PlayState._handleCollisions = function () {
 PlayState._handleInput = function () {
   let x = 0
   let y = 0
+  // if(!this.god.floatTween.isRunning) {
+  //   this.god.doTween()
+  // }
+
 
   if (this.keys.left.isDown) {
     x = -1
@@ -99,9 +94,11 @@ PlayState._handleInput = function () {
   }
 
   if (this.keys.up.isDown) {
+    // this.god.floatTween.stop()
     y = -1
   }
   else if (this.keys.down.isDown) {
+    // this.god.floatTween.stop()
     y = 1
   }
   this.god.float(x, y)
@@ -159,11 +156,13 @@ PlayState._spawnText = function(data) {
   }
 
   const texts = {
+    help: 'Hold SPACEBAR to interact',
     sinner: 'Oh god, my cat is in that tree\nand I can\'t get her down!',
     lumberjack: 'Oh god, I don\'t wanna be \na lumberjack anymore,\nthere are no trees!\n I want to be a fisherman,\nbut there\'s no water either!'
   }
   this.sinnerText = this.game.add.text(0, 0, texts.sinner, textStyle);
   this.lumberjackText = this.game.add.text(0, 0, texts.lumberjack, textStyle);
+  this.helpText = this.game.add.text(0, 0, texts.help, textStyle);
 
   this.sinnerText.setTextBounds(150, 700, 600, 200)
   this.sinnerText.lineSpacing = 1
@@ -172,6 +171,11 @@ PlayState._spawnText = function(data) {
   this.lumberjackText.setTextBounds(500, 1150, 600, 300)
   this.lumberjackText.lineSpacing = 1
   this.lumberjackText.visible = false
+
+  this.helpText.setTextBounds(0, 550, 960, 50)
+  this.helpText.lineSpacing = 1
+  this.helpText.visible = false
+  this.helpText.fixedToCamera = true
 }
 
 PlayState._spawnWrath = function () {
@@ -216,6 +220,8 @@ PlayState.onGodVsAxe = function (god, axe) {
 
 PlayState.onGodVsTree = function (god, tree) {
   if (god.hasAxe) {
+    this.helpText.visible = true
+
     this.keys.action.onDown.add(function () {
       const _this = this
       this.sfx.chop.play(null, 0, 1, true)
@@ -226,6 +232,34 @@ PlayState.onGodVsTree = function (god, tree) {
         this.cat.animations.play('standing')
       }, 1000)
     }, this)
+  }
+}
+
+PlayState.onGodVsSinner = function () {
+  if (!this.sinner.isDead && !this.sinner.isHappy) {
+    this.helpText.visible = true
+
+    if(this.keys.action.isDown) {
+      this.sinnerText.visible = true
+      this.helpText.visible = false
+    } else {
+      this.sinnerText.visible = false
+      this.helpText.visible = true
+    }
+  }
+}
+
+PlayState.onGodVsLumberjack = function () {
+  if (!this.lumberjack.isDead && !this.lumberjack.isHappy) {
+    this.helpText.visible = true
+
+    if(this.keys.action.isDown) {
+      this.lumberjackText.visible = true
+      this.helpText.visible = false
+    } else {
+      this.lumberjackText.visible = false
+      this.helpText.visible = true
+    }
   }
 }
 
