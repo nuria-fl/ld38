@@ -10,7 +10,7 @@ module.exports = {
   create: function () {
     const textStyle = {
       font: '40px Amatica SC',
-      fill: '#fff',
+      fill: '#58a4b0',
       fontWeight: 'bold',
       boundsAlignH: 'center',
       boundsAlignV: 'middle'
@@ -19,7 +19,7 @@ module.exports = {
     const gameOver = this.game.add.text(0, 0, ' Game Over ', Object.assign({}, textStyle, {
       font: '80px Amatica SC'
     }))
-    gameOver.setShadow(-2, 2, '#000', 0)
+    // gameOver.setShadow(-2, 2, '#000', 0)
     gameOver.setTextBounds(0, 150, 960, 100)
 
     const scoreTextContent = {
@@ -39,11 +39,11 @@ module.exports = {
     }
 
     const scoreTextLine1 = this.game.add.text(0, 0, scoreTextContent.line1, textStyle)
-    scoreTextLine1.setShadow(-2, 2, '#000', 0)
+    // scoreTextLine1.setShadow(-2, 2, '#000', 0)
     scoreTextLine1.setTextBounds(0, 250, 960, 100)
 
     const scoreTextLine2 = this.game.add.text(0, 0, scoreTextContent.line2, textStyle)
-    scoreTextLine2.setShadow(-2, 2, '#000', 0)
+    // scoreTextLine2.setShadow(-2, 2, '#000', 0)
     scoreTextLine2.setTextBounds(0, 300, 960, 100)
 
     const button = this.game.add.button(480, 450, 'button', this.startOver, this, 1, 0);

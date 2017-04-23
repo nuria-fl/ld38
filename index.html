@@ -19,30 +19,33 @@
       button {
         min-width: 200px;
         margin-top: 20px;
-        padding: 10px 20px;
-        background: #fff;
-        border: none;
+        padding: 5px 20px;
+        background: #58a4b0;
+        border: 3px solid #58a4b0;
         border-radius: 5px;
-        color: #3899DC;
+        color: #FFF;
         cursor: pointer;
         font-family: 'Amatica SC';
         font-size: 30px;
         font-weight: 700;
         text-transform: uppercase;
-        -webkit-transition: all .3s;
-        -o-transition: all .3s;
-        transition: all .3s;
 
       }
       button:hover {
-        opacity: .8;
+        background: #fff;
+        color: #58a4b0;
       }
       #startScreen {
         width: 960px;
         height: 600px;
         margin: 0 auto;
-        background: #3899DC;
-        color: #fff;
+        /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#c7efcf+0,eef5db+100 */
+        background: #c7efcf; /* Old browsers */
+        background: -moz-linear-gradient(top,  #c7efcf 0%, #eef5db 100%); /* FF3.6-15 */
+        background: -webkit-linear-gradient(top,  #c7efcf 0%,#eef5db 100%); /* Chrome10-25,Safari5.1-6 */
+        background: linear-gradient(to bottom,  #c7efcf 0%,#eef5db 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#c7efcf', endColorstr='#eef5db',GradientType=0 ); /* IE6-9 */
+        color: #58a4b0;
         display: -webkit-flex;
         display: -moz-flex;
         display: -ms-flex;
@@ -50,7 +53,6 @@
         display: flex;
         flex-direction: column;
         justify-content: center;
-        text-shadow: -2px 2px #000;
       }
     </style>
 </head>

@@ -8,12 +8,12 @@ const PlayState = {}
 PlayState._loadLevel = function (data) {
   this.bgDecoration = this.game.add.group()
 
-  this.mountain = this.bgDecoration.create(100, 1220, 'mountain')
+  this.mountain = this.bgDecoration.create(100, 1278, 'mountain')
   this.game.physics.enable(this.mountain)
   this.mountain.body.allowGravity = false
   this.mountain.body.immovable = true
 
-  this.snow = this.bgDecoration.create(300, 1220, 'snow')
+  this.snow = this.bgDecoration.create(340, 1273, 'snow')
   this.game.physics.enable(this.snow)
   this.snow.body.allowGravity = false
   this.snow.body.immovable = true
@@ -23,7 +23,7 @@ PlayState._loadLevel = function (data) {
   this.world.body.allowGravity = false
   this.world.body.immovable = true
 
-  this.water = this.bgDecoration.create(348, 1567, 'water')
+  this.water = this.bgDecoration.create(355, 1566, 'water')
   this.game.physics.enable(this.water)
   this.water.body.allowGravity = false
   this.water.body.immovable = true
@@ -80,18 +80,17 @@ PlayState._handleCollisions = function () {
   this.game.physics.arcade.overlap(this.god, this.tree, this.onGodVsTree, null, this)
 }
 
-var facing
 PlayState._handleInput = function () {
   let x = 0
   let y = 0
 
   if (this.keys.left.isDown) {
     x = -1
-    facing = 'left'
+    this.god.facing = 'left'
   }
   else if (this.keys.right.isDown) {
     x = 1
-    facing = 'right'
+    this.god.facing = 'right'
   }
 
   if (this.keys.up.isDown) {
@@ -104,7 +103,7 @@ PlayState._handleInput = function () {
 
   if (this.keys.wrath.isDown) {
     let direction = 0
-    if (facing === 'right') {
+    if (this.god.facing === 'right') {
       direction = 960
     }
 
@@ -125,7 +124,7 @@ PlayState._spawnCharacters = function () {
   this.game.add.existing(this.sinner)
 
   // spawn god
-  this.god = new God(this.game, 450, 150)
+  this.god = new God(this.game, 450, 1500)
   this.game.add.existing(this.god)
   this.camera.follow(this.god)
   this.god.body.allowGravity = false
