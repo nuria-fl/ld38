@@ -1,6 +1,5 @@
 const preload = function () {
   this.game.load.image('background', 'assets/images/background.png')
-  this.game.load.image('lumberjack', 'assets/images/lumberjack.png')
   this.game.load.image('sinner', 'assets/images/sinner.png')
   this.game.load.image('interactArea', 'assets/images/interactArea.png')
   this.game.load.image('bullet', 'assets/images/bullet.png')
@@ -19,6 +18,7 @@ const preload = function () {
   this.game.load.audio('sfx:wrath', 'assets/sound/wrath.wav')
 
   this.game.load.spritesheet('god', 'assets/images/god.png', 99, 168)
+  this.game.load.spritesheet('lumberjack', 'assets/images/lumberjack.png', 72, 123)
 }
 
 module.exports = preload

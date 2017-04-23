@@ -55,20 +55,20 @@ PlayState._handleCollisions = function () {
 
   // surrounding characters areas
   this.game.physics.arcade.overlap(this.god, this.sinnerArea, () => {
-    if (!this.sinner.isDead) {
+    if (!this.sinner.isDead && !this.sinner.isHappy) {
       this.sinnerText.visible = true
     }
   })
 
   this.game.physics.arcade.overlap(this.god, this.lumberjackArea, () => {
-    if (!this.lumberjack.isDead) {
+    if (!this.lumberjack.isDead && !this.lumberjack.isHappy) {
       this.lumberjackText.visible = true
     }
   })
 
   // bullets
   this.game.physics.arcade.collide(this.wrath.bullets, this.lumberjack, this.onBulletVsCharacter, null, this)
-  this.game.physics.arcade.collide(this.wrath.bullets, this.cat, this.onBulletVsCharacter, null, this)
+  // this.game.physics.arcade.collide(this.wrath.bullets, this.cat, this.onBulletVsCharacter, null, this)
   this.game.physics.arcade.collide(this.wrath.bullets, this.sinner, this.onBulletVsCharacter, null, this)
 
   // melt snow

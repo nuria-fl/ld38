@@ -5,15 +5,21 @@ module.exports = function () {
   this._handleInput()
 
   if (this.lumberjack.isDead && this.sinner.isDead) {
-    this.game.state.start('end', false, false, 'evil')
+    setTimeout(() => {
+      this.game.state.start('end', false, false, 'evil')
+    }, 1000)
   }
 
   if (this.lumberjack.isHappy && this.sinner.isHappy) {
-    this.game.state.start('end', false, false, 'awesome')
+    setTimeout(() => {
+      this.game.state.start('end', false, false, 'awesome')
+    }, 1000)
   }
 
   if ((this.lumberjack.isHappy && this.sinner.isDead) ||
      (this.lumberjack.isDead && this.sinner.isHappy)) {
-    this.game.state.start('end', false, false, 'regular')
+       setTimeout(() => {
+         this.game.state.start('end', false, false, 'regular')
+       }, 1000)
   }
 }
