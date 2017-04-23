@@ -138,6 +138,10 @@ function Lumberjack(game, x, y) {
   Phaser.Sprite.call(this, game, x, y, 'lumberjack');
   this.anchor.set(0.5, 0.5);
 
+  this.animations.add('stop', [0]);
+  this.animations.add('go', [1]);
+  this.animations.add('fishing', [2]);
+
   this.game.physics.enable(this);
   this.body.collideWorldBounds = true;
 }
@@ -147,8 +151,16 @@ Lumberjack.prototype = Object.create(Phaser.Sprite.prototype);
 Lumberjack.prototype.constructor = Lumberjack;
 
 Lumberjack.prototype.goFish = function (direction) {
-  this.isHappy = true;
-  this.game.add.tween(this).to({ x: '-150' }, 1500, Phaser.Easing.Elastic.InOut, true);
+  var _this = this;
+
+  this.animations.play('go');
+
+  var tween = this.game.add.tween(this).to({ x: '-160' }, 1500, Phaser.Easing.Elastic.InOut, true);
+
+  tween.onComplete.add(function () {
+    _this.animations.play('fishing');
+    _this.isHappy = true;
+  });
 };
 
 module.exports = Lumberjack;
@@ -288,20 +300,20 @@ PlayState._handleCollisions = function () {
 
   // surrounding characters areas
   this.game.physics.arcade.overlap(this.god, this.sinnerArea, function () {
-    if (!_this2.sinner.isDead) {
+    if (!_this2.sinner.isDead && !_this2.sinner.isHappy) {
       _this2.sinnerText.visible = true;
     }
   });
 
   this.game.physics.arcade.overlap(this.god, this.lumberjackArea, function () {
-    if (!_this2.lumberjack.isDead) {
+    if (!_this2.lumberjack.isDead && !_this2.lumberjack.isHappy) {
       _this2.lumberjackText.visible = true;
     }
   });
 
   // bullets
   this.game.physics.arcade.collide(this.wrath.bullets, this.lumberjack, this.onBulletVsCharacter, null, this);
-  this.game.physics.arcade.collide(this.wrath.bullets, this.cat, this.onBulletVsCharacter, null, this);
+  // this.game.physics.arcade.collide(this.wrath.bullets, this.cat, this.onBulletVsCharacter, null, this)
   this.game.physics.arcade.collide(this.wrath.bullets, this.sinner, this.onBulletVsCharacter, null, this);
 
   // melt snow
@@ -465,7 +477,6 @@ module.exports = PlayState;
 
 var preload = function preload() {
   this.game.load.image('background', 'assets/images/background.png');
-  this.game.load.image('lumberjack', 'assets/images/lumberjack.png');
   this.game.load.image('sinner', 'assets/images/sinner.png');
   this.game.load.image('interactArea', 'assets/images/interactArea.png');
   this.game.load.image('bullet', 'assets/images/bullet.png');
@@ -484,6 +495,7 @@ var preload = function preload() {
   this.game.load.audio('sfx:wrath', 'assets/sound/wrath.wav');
 
   this.game.load.spritesheet('god', 'assets/images/god.png', 99, 168);
+  this.game.load.spritesheet('lumberjack', 'assets/images/lumberjack.png', 72, 123);
 };
 
 module.exports = preload;
@@ -492,21 +504,29 @@ module.exports = preload;
 'use strict';
 
 module.exports = function () {
+  var _this = this;
+
   this.sinnerText.visible = false;
   this.lumberjackText.visible = false;
   this._handleCollisions();
   this._handleInput();
 
   if (this.lumberjack.isDead && this.sinner.isDead) {
-    this.game.state.start('end', false, false, 'evil');
+    setTimeout(function () {
+      _this.game.state.start('end', false, false, 'evil');
+    }, 1000);
   }
 
   if (this.lumberjack.isHappy && this.sinner.isHappy) {
-    this.game.state.start('end', false, false, 'awesome');
+    setTimeout(function () {
+      _this.game.state.start('end', false, false, 'awesome');
+    }, 1000);
   }
 
   if (this.lumberjack.isHappy && this.sinner.isDead || this.lumberjack.isDead && this.sinner.isHappy) {
-    this.game.state.start('end', false, false, 'regular');
+    setTimeout(function () {
+      _this.game.state.start('end', false, false, 'regular');
+    }, 1000);
   }
 };
 
