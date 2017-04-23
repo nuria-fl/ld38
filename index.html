@@ -7,21 +7,62 @@
   <script src="js/bundle.js"></script>
 
     <style>
-        canvas {
-            margin: 0 auto;
-        }
-        p {
-          font-family: sans-serif;
-          text-align: center;
-        }
-        button {
-          font-family: 'Amatica SC';
-          font-weight: 700;
-        }
+      body {
+        font-family: 'Amatica SC';
+        font-weight: 700;
+        text-align: center;
+        font-size: 26px;
+      }
+      canvas {
+        margin: 0 auto;
+      }
+      button {
+        min-width: 200px;
+        margin-top: 20px;
+        padding: 10px 20px;
+        background: #fff;
+        border: none;
+        border-radius: 5px;
+        color: #3899DC;
+        cursor: pointer;
+        font-family: 'Amatica SC';
+        font-size: 30px;
+        font-weight: 700;
+        text-transform: uppercase;
+        -webkit-transition: all .3s;
+        -o-transition: all .3s;
+        transition: all .3s;
+
+      }
+      button:hover {
+        opacity: .8;
+      }
+      #startScreen {
+        width: 960px;
+        height: 600px;
+        margin: 0 auto;
+        background: #3899DC;
+        color: #fff;
+        display: -webkit-flex;
+        display: -moz-flex;
+        display: -ms-flex;
+        display: -o-flex;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        text-shadow: -2px 2px #000;
+      }
     </style>
 </head>
 <body>
     <div id="game">
-      <button type="button" id="play">Play</button>
+      <div id="startScreen">
+        <div>
+          <h1>Newbie God</h1>
+          <p>You've just graduated from Godly Academy and you're ready to rule your first world.<br>It's in your hands to rule by fear or be a benevolent god.</p>
+          <p>What's your choice?</p>
+          <button type="button" id="play">Start</button>
+        </div>
+      </div>
     </div>
 </body>

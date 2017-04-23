@@ -12,9 +12,10 @@ function start () {
 }
 
 window.onload = function () {
-  document.getElementById('play').addEventListener('click', function (e) {
-    e.preventDefault()
-
-    start()
-  })
+  document.getElementById('play')
+    .addEventListener('click', function (e) {
+      e.preventDefault()
+      document.getElementById('startScreen').style.display = 'none'
+      start()
+    })
 }
