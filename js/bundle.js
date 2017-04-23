@@ -22,7 +22,6 @@ module.exports = {
     var gameOver = this.game.add.text(0, 0, ' Game Over ', Object.assign({}, textStyle, {
       font: '80px Amatica SC'
     }));
-    // gameOver.setShadow(-2, 2, '#000', 0)
     gameOver.setTextBounds(0, 150, 960, 100);
 
     var scoreTextContent = {
@@ -42,11 +41,9 @@ module.exports = {
     }
 
     var scoreTextLine1 = this.game.add.text(0, 0, scoreTextContent.line1, textStyle);
-    // scoreTextLine1.setShadow(-2, 2, '#000', 0)
     scoreTextLine1.setTextBounds(0, 250, 960, 100);
 
     var scoreTextLine2 = this.game.add.text(0, 0, scoreTextContent.line2, textStyle);
-    // scoreTextLine2.setShadow(-2, 2, '#000', 0)
     scoreTextLine2.setTextBounds(0, 300, 960, 100);
 
     var button = this.game.add.button(480, 450, 'button', this.startOver, this, 1, 0);
@@ -98,6 +95,7 @@ function God(game, x, y) {
 
   this.game.physics.enable(this);
   this.body.collideWorldBounds = true;
+  // this.doTween()
 }
 
 // inherit from Phaser.Sprite
@@ -107,6 +105,12 @@ God.prototype.constructor = God;
 God.prototype.float = function (x, y) {
   this.x += x * 5;
   this.y += y * 5;
+};
+
+God.prototype.doTween = function () {
+  this.floatTween = this.game.add.tween(this).to({
+    y: this.position.y - 50
+  }, 1500, Phaser.Easing.Linear.None, true, 0, 0, true).loop(true);
 };
 
 God.prototype._getAnimationName = function () {
@@ -173,6 +177,9 @@ function Sinner(game, x, y) {
   Phaser.Sprite.call(this, game, x, y, 'sinner');
   this.anchor.set(0.5, 0.5);
 
+  this.animations.add('stop', [0]);
+  this.animations.add('clap', [1, 2], 6, true);
+
   this.game.physics.enable(this);
   this.body.collideWorldBounds = true;
 }
@@ -181,6 +188,10 @@ function Sinner(game, x, y) {
 Sinner.prototype = Object.create(Phaser.Sprite.prototype);
 Sinner.prototype.constructor = Sinner;
 
+Sinner.prototype.getHappy = function () {
+  this.animations.play('clap');
+  this.isHappy = true;
+};
 module.exports = Sinner;
 
 },{}],6:[function(require,module,exports){
@@ -255,6 +266,9 @@ PlayState._loadLevel = function (data) {
   this.game.physics.enable(this.mountain);
   this.mountain.body.allowGravity = false;
   this.mountain.body.immovable = true;
+  this.waterfall = this.bgDecoration.create(100, 1278, 'waterfall');
+  this.waterfall.alpha = 0;
+  this.waterfall.animations.add('flowing', [0, 0, 0, 1, 1, 1], 8, true);
 
   this.snow = this.bgDecoration.create(340, 1273, 'snow');
   this.game.physics.enable(this.snow);
@@ -265,22 +279,27 @@ PlayState._loadLevel = function (data) {
   this.game.physics.enable(this.world);
   this.world.body.allowGravity = false;
   this.world.body.immovable = true;
+  this.bgDecoration.create(10, 1548, 'world-grass');
 
   this.water = this.bgDecoration.create(355, 1566, 'water');
   this.game.physics.enable(this.water);
   this.water.body.allowGravity = false;
   this.water.body.immovable = true;
-  this.water.visible = false;
+  this.water.alpha = 0;
 
   this.platform = this.bgDecoration.create(50, 1010, 'platform');
   this.game.physics.enable(this.platform);
   this.platform.body.allowGravity = false;
   this.platform.body.immovable = true;
+  this.bgDecoration.create(50, 998, 'platform-grass');
 
   this.tree = this.bgDecoration.create(100, 700, 'tree');
   this.game.physics.enable(this.tree);
 
   this.cat = this.bgDecoration.create(150, 600, 'cat');
+  this.cat.animations.add('stop', [1, 1, 0], 2, true);
+  this.cat.animations.add('standing', [2]);
+  this.cat.animations.play('stop');
   this.game.physics.enable(this.cat);
 
   this._spawnCharacters();
@@ -290,8 +309,6 @@ PlayState._loadLevel = function (data) {
 };
 
 PlayState._handleCollisions = function () {
-  var _this2 = this;
-
   this.game.physics.arcade.collide(this.platform, this.sinner);
   this.game.physics.arcade.collide(this.platform, this.tree);
   this.game.physics.arcade.collide(this.platform, this.cat);
@@ -299,17 +316,8 @@ PlayState._handleCollisions = function () {
   this.game.physics.arcade.collide(this.lumberjack, this.world);
 
   // surrounding characters areas
-  this.game.physics.arcade.overlap(this.god, this.sinnerArea, function () {
-    if (!_this2.sinner.isDead && !_this2.sinner.isHappy) {
-      _this2.sinnerText.visible = true;
-    }
-  });
-
-  this.game.physics.arcade.overlap(this.god, this.lumberjackArea, function () {
-    if (!_this2.lumberjack.isDead && !_this2.lumberjack.isHappy) {
-      _this2.lumberjackText.visible = true;
-    }
-  });
+  this.game.physics.arcade.overlap(this.god, this.sinnerArea, this.onGodVsSinner, null, this);
+  this.game.physics.arcade.overlap(this.god, this.lumberjackArea, this.onGodVsLumberjack, null, this);
 
   // bullets
   this.game.physics.arcade.collide(this.wrath.bullets, this.lumberjack, this.onBulletVsCharacter, null, this);
@@ -330,6 +338,10 @@ PlayState._handleCollisions = function () {
 PlayState._handleInput = function () {
   var x = 0;
   var y = 0;
+  // if(!this.god.floatTween.isRunning) {
+  //   this.god.doTween()
+  // }
+
 
   if (this.keys.left.isDown) {
     x = -1;
@@ -340,8 +352,10 @@ PlayState._handleInput = function () {
   }
 
   if (this.keys.up.isDown) {
+    // this.god.floatTween.stop()
     y = -1;
   } else if (this.keys.down.isDown) {
+    // this.god.floatTween.stop()
     y = 1;
   }
   this.god.float(x, y);
@@ -399,11 +413,15 @@ PlayState._spawnText = function (data) {
   };
 
   var texts = {
+    start: 'Go down to earth and check how your people are doing',
+    help: 'Hold SPACEBAR to interact',
     sinner: 'Oh god, my cat is in that tree\nand I can\'t get her down!',
     lumberjack: 'Oh god, I don\'t wanna be \na lumberjack anymore,\nthere are no trees!\n I want to be a fisherman,\nbut there\'s no water either!'
   };
   this.sinnerText = this.game.add.text(0, 0, texts.sinner, textStyle);
   this.lumberjackText = this.game.add.text(0, 0, texts.lumberjack, textStyle);
+  this.helpText = this.game.add.text(0, 0, texts.help, textStyle);
+  this.startText = this.game.add.text(0, 0, texts.start, textStyle);
 
   this.sinnerText.setTextBounds(150, 700, 600, 200);
   this.sinnerText.lineSpacing = 1;
@@ -412,6 +430,15 @@ PlayState._spawnText = function (data) {
   this.lumberjackText.setTextBounds(500, 1150, 600, 300);
   this.lumberjackText.lineSpacing = 1;
   this.lumberjackText.visible = false;
+
+  this.helpText.setTextBounds(0, 550, 960, 50);
+  this.helpText.lineSpacing = 1;
+  this.helpText.visible = false;
+  this.helpText.fixedToCamera = true;
+
+  this.startText.setTextBounds(0, 550, 960, 50);
+  this.startText.lineSpacing = 1;
+  this.startText.fixedToCamera = true;
 };
 
 PlayState._spawnWrath = function () {
@@ -440,8 +467,10 @@ PlayState.onBulletVsCharacter = function (character, bullet) {
 
 PlayState.onBulletVsSnow = function (character, bullet) {
   this.onBulletVsCharacter(character, bullet);
-
-  this.water.visible = true;
+  this.game.add.tween(this.waterfall).to({ alpha: 1 }, 1000, Phaser.Easing.Linear.None, true);
+  this.game.add.tween(this.water).to({ alpha: 1 }, 2000, Phaser.Easing.Linear.None, true);
+  // this.water.alpha = 1
+  this.waterfall.animations.play('flowing');
   if (!this.lumberjack.isDead) {
     this.lumberjack.goFish();
     this._spawnAxe();
@@ -456,17 +485,48 @@ PlayState.onGodVsAxe = function (god, axe) {
 
 PlayState.onGodVsTree = function (god, tree) {
   if (god.hasAxe) {
+    this.helpText.visible = true;
+
     this.keys.action.onDown.add(function () {
-      var _this3 = this;
+      var _this2 = this;
 
       var _this = this;
       this.sfx.chop.play(null, 0, 1, true);
       setTimeout(function () {
         _this.tree.kill();
-        _this.sinner.isHappy = true;
-        _this3.sfx.chop.stop();
+        _this.sinner.getHappy();
+        _this2.sfx.chop.stop();
+        _this2.cat.animations.play('standing');
       }, 1000);
     }, this);
+  }
+};
+
+PlayState.onGodVsSinner = function () {
+  if (!this.sinner.isDead && !this.sinner.isHappy) {
+    this.helpText.visible = true;
+
+    if (this.keys.action.isDown) {
+      this.sinnerText.visible = true;
+      this.helpText.visible = false;
+    } else {
+      this.sinnerText.visible = false;
+      this.helpText.visible = true;
+    }
+  }
+};
+
+PlayState.onGodVsLumberjack = function () {
+  if (!this.lumberjack.isDead && !this.lumberjack.isHappy) {
+    this.helpText.visible = true;
+
+    if (this.keys.action.isDown) {
+      this.lumberjackText.visible = true;
+      this.helpText.visible = false;
+    } else {
+      this.lumberjackText.visible = false;
+      this.helpText.visible = true;
+    }
   }
 };
 
@@ -477,13 +537,13 @@ module.exports = PlayState;
 
 var preload = function preload() {
   this.game.load.image('background', 'assets/images/background.png');
-  this.game.load.image('sinner', 'assets/images/sinner.png');
   this.game.load.image('interactArea', 'assets/images/interactArea.png');
   this.game.load.image('bullet', 'assets/images/bullet.png');
   this.game.load.image('platform', 'assets/images/platform.png');
+  this.game.load.image('platform-grass', 'assets/images/platform-grass.png');
   this.game.load.image('tree', 'assets/images/tree.png');
-  this.game.load.image('cat', 'assets/images/cat.png');
   this.game.load.image('world', 'assets/images/world.png');
+  this.game.load.image('world-grass', 'assets/images/world-grass.png');
   this.game.load.image('mountain', 'assets/images/mountain.png');
   this.game.load.image('snow', 'assets/images/snow.png');
   this.game.load.image('water', 'assets/images/water.png');
@@ -494,8 +554,11 @@ var preload = function preload() {
   this.game.load.audio('sfx:got', 'assets/sound/got.wav');
   this.game.load.audio('sfx:wrath', 'assets/sound/wrath.wav');
 
+  this.game.load.spritesheet('waterfall', 'assets/images/waterfall.png', 846, 328);
   this.game.load.spritesheet('god', 'assets/images/god.png', 99, 168);
   this.game.load.spritesheet('lumberjack', 'assets/images/lumberjack.png', 72, 123);
+  this.game.load.spritesheet('sinner', 'assets/images/sinner.png', 60, 141);
+  this.game.load.spritesheet('cat', 'assets/images/cat.png', 42, 39);
 };
 
 module.exports = preload;
@@ -506,27 +569,32 @@ module.exports = preload;
 module.exports = function () {
   var _this = this;
 
-  this.sinnerText.visible = false;
-  this.lumberjackText.visible = false;
+  // this.sinnerText.visible = false
+  // this.lumberjackText.visible = false
+  this.helpText.visible = false;
   this._handleCollisions();
   this._handleInput();
+
+  if (this.god.position.y > 300) {
+    this.startText.kill();
+  }
 
   if (this.lumberjack.isDead && this.sinner.isDead) {
     setTimeout(function () {
       _this.game.state.start('end', false, false, 'evil');
-    }, 1000);
+    }, 2000);
   }
 
   if (this.lumberjack.isHappy && this.sinner.isHappy) {
     setTimeout(function () {
       _this.game.state.start('end', false, false, 'awesome');
-    }, 1000);
+    }, 2000);
   }
 
   if (this.lumberjack.isHappy && this.sinner.isDead || this.lumberjack.isDead && this.sinner.isHappy) {
     setTimeout(function () {
       _this.game.state.start('end', false, false, 'regular');
-    }, 1000);
+    }, 2000);
   }
 };
 
