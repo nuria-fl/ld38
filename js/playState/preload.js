@@ -1,11 +1,9 @@
 const preload = function () {
   this.game.load.image('background', 'assets/images/background.png')
-  this.game.load.image('sinner', 'assets/images/sinner.png')
   this.game.load.image('interactArea', 'assets/images/interactArea.png')
   this.game.load.image('bullet', 'assets/images/bullet.png')
   this.game.load.image('platform', 'assets/images/platform.png')
   this.game.load.image('tree', 'assets/images/tree.png')
-  this.game.load.image('cat', 'assets/images/cat.png')
   this.game.load.image('world', 'assets/images/world.png')
   this.game.load.image('mountain', 'assets/images/mountain.png')
   this.game.load.image('snow', 'assets/images/snow.png')
@@ -19,6 +17,8 @@ const preload = function () {
 
   this.game.load.spritesheet('god', 'assets/images/god.png', 99, 168)
   this.game.load.spritesheet('lumberjack', 'assets/images/lumberjack.png', 72, 123)
+  this.game.load.spritesheet('sinner', 'assets/images/sinner.png', 60, 141)
+  this.game.load.spritesheet('cat', 'assets/images/cat.png', 42, 39)
 }
 
 module.exports = preload

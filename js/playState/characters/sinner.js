@@ -3,6 +3,9 @@ function Sinner (game, x, y) {
   Phaser.Sprite.call(this, game, x, y, 'sinner')
   this.anchor.set(0.5, 0.5)
 
+  this.animations.add('stop', [0]);
+  this.animations.add('clap', [1, 2], 6, true);
+
   this.game.physics.enable(this)
   this.body.collideWorldBounds = true
 }
@@ -11,4 +14,8 @@ function Sinner (game, x, y) {
 Sinner.prototype = Object.create(Phaser.Sprite.prototype)
 Sinner.prototype.constructor = Sinner
 
+Sinner.prototype.getHappy = function() {
+  this.animations.play('clap')
+  this.isHappy = true
+}
 module.exports = Sinner

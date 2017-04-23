@@ -38,6 +38,9 @@ PlayState._loadLevel = function (data) {
   this.game.physics.enable(this.tree)
 
   this.cat = this.bgDecoration.create(150, 600, 'cat')
+  this.cat.animations.add('stop', [1, 1, 0], 2, true);
+  this.cat.animations.add('standing', [2]);
+  this.cat.animations.play('stop')
   this.game.physics.enable(this.cat)
 
   this._spawnCharacters()
@@ -218,8 +221,9 @@ PlayState.onGodVsTree = function (god, tree) {
       this.sfx.chop.play(null, 0, 1, true)
       setTimeout(() => {
         _this.tree.kill()
-        _this.sinner.isHappy = true
+        _this.sinner.getHappy()
         this.sfx.chop.stop()
+        this.cat.animations.play('standing')
       }, 1000)
     }, this)
   }
