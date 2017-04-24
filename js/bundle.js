@@ -179,6 +179,7 @@ function Sinner(game, x, y) {
 
   this.animations.add('stop', [0]);
   this.animations.add('clap', [1, 2], 6, true);
+  this.animations.add('cry', [3]);
 
   this.game.physics.enable(this);
   this.body.collideWorldBounds = true;
@@ -262,6 +263,16 @@ var PlayState = {};
 PlayState._loadLevel = function (data) {
   this.bgDecoration = this.game.add.group();
 
+  this.inventory = this.bgDecoration.create(727, 10, 'inventory');
+  this.inventory.animations.add('gotAxe', [1]);
+  this.inventory.fixedToCamera = true;
+
+  this.cloud1 = this.bgDecoration.create(110, 140, 'cloud1');
+  this.cloud2 = this.bgDecoration.create(630, 430, 'cloud2');
+
+  this.game.add.tween(this.cloud1).to({ y: '+30' }, 2500, Phaser.Easing.Linear.None, true, 0, -1, true);
+  this.game.add.tween(this.cloud2).to({ y: '-20' }, 2500, Phaser.Easing.Linear.None, true, 0, -1, true);
+
   this.mountain = this.bgDecoration.create(100, 1278, 'mountain');
   this.game.physics.enable(this.mountain);
   this.mountain.body.allowGravity = false;
@@ -291,7 +302,9 @@ PlayState._loadLevel = function (data) {
   this.game.physics.enable(this.platform);
   this.platform.body.allowGravity = false;
   this.platform.body.immovable = true;
-  this.bgDecoration.create(50, 998, 'platform-grass');
+  this.grass = this.bgDecoration.create(50, 995, 'platform-grass');
+  this.game.physics.enable(this.grass);
+  this.game.add.tween(this.platform).to({ y: '+20' }, 2500, Phaser.Easing.Linear.None, true, 0, -1, true);
 
   this.tree = this.bgDecoration.create(100, 700, 'tree');
   this.game.physics.enable(this.tree);
@@ -312,6 +325,7 @@ PlayState._handleCollisions = function () {
   this.game.physics.arcade.collide(this.platform, this.sinner);
   this.game.physics.arcade.collide(this.platform, this.tree);
   this.game.physics.arcade.collide(this.platform, this.cat);
+  this.game.physics.arcade.collide(this.platform, this.grass);
   this.game.physics.arcade.collide(this.tree, this.cat);
   this.game.physics.arcade.collide(this.lumberjack, this.world);
 
@@ -321,8 +335,8 @@ PlayState._handleCollisions = function () {
 
   // bullets
   this.game.physics.arcade.collide(this.wrath.bullets, this.lumberjack, this.onBulletVsCharacter, null, this);
-  // this.game.physics.arcade.collide(this.wrath.bullets, this.cat, this.onBulletVsCharacter, null, this)
   this.game.physics.arcade.collide(this.wrath.bullets, this.sinner, this.onBulletVsCharacter, null, this);
+  this.game.physics.arcade.collide(this.wrath.bullets, this.cat, this.onBulletVsCat, null, this);
 
   // melt snow
   this.game.physics.arcade.collide(this.wrath.bullets, this.snow, this.onBulletVsSnow, null, this);
@@ -477,8 +491,16 @@ PlayState.onBulletVsSnow = function (character, bullet) {
   }
 };
 
+PlayState.onBulletVsCat = function (character, bullet) {
+  this.onBulletVsCharacter(character, bullet);
+  this.sinner.animations.play('cry');
+  this.sinner.isSad = true;
+  this.sinnerArea.kill();
+};
+
 PlayState.onGodVsAxe = function (god, axe) {
   god.hasAxe = true;
+  this.inventory.animations.play('gotAxe');
   this.sfx.got.play();
   axe.kill();
 };
@@ -523,9 +545,11 @@ PlayState.onGodVsLumberjack = function () {
     if (this.keys.action.isDown) {
       this.lumberjackText.visible = true;
       this.helpText.visible = false;
+      this.inventory.visible = false;
     } else {
       this.lumberjackText.visible = false;
       this.helpText.visible = true;
+      this.inventory.visible = true;
     }
   }
 };
@@ -548,6 +572,8 @@ var preload = function preload() {
   this.game.load.image('snow', 'assets/images/snow.png');
   this.game.load.image('water', 'assets/images/water.png');
   this.game.load.image('axe', 'assets/images/axe.png');
+  this.game.load.image('cloud1', 'assets/images/cloud1.png');
+  this.game.load.image('cloud2', 'assets/images/cloud2.png');
 
   this.game.load.audio('sfx:chop', 'assets/sound/chop.wav');
   this.game.load.audio('sfx:death', 'assets/sound/death.wav');
@@ -559,6 +585,7 @@ var preload = function preload() {
   this.game.load.spritesheet('lumberjack', 'assets/images/lumberjack.png', 72, 123);
   this.game.load.spritesheet('sinner', 'assets/images/sinner.png', 60, 141);
   this.game.load.spritesheet('cat', 'assets/images/cat.png', 42, 39);
+  this.game.load.spritesheet('inventory', 'assets/images/inventory.png', 213, 70);
 };
 
 module.exports = preload;
@@ -579,20 +606,23 @@ module.exports = function () {
     this.startText.kill();
   }
 
-  if (this.lumberjack.isDead && this.sinner.isDead) {
+  if (this.lumberjack.isDead && this.sinner.isDead || this.lumberjack.isDead && this.sinner.isSad) {
     setTimeout(function () {
+      _this.inventory.kill();
       _this.game.state.start('end', false, false, 'evil');
     }, 2000);
   }
 
   if (this.lumberjack.isHappy && this.sinner.isHappy) {
     setTimeout(function () {
+      _this.inventory.kill();
       _this.game.state.start('end', false, false, 'awesome');
     }, 2000);
   }
 
-  if (this.lumberjack.isHappy && this.sinner.isDead || this.lumberjack.isDead && this.sinner.isHappy) {
+  if (this.lumberjack.isHappy && this.sinner.isDead || this.lumberjack.isDead && this.sinner.isHappy || this.lumberjack.isHappy && this.sinner.isSad) {
     setTimeout(function () {
+      _this.inventory.kill();
       _this.game.state.start('end', false, false, 'regular');
     }, 2000);
   }
