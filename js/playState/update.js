@@ -9,7 +9,8 @@ module.exports = function () {
     this.startText.kill()
   }
 
-  if (this.lumberjack.isDead && this.sinner.isDead) {
+  if ((this.lumberjack.isDead && this.sinner.isDead) ||
+      (this.lumberjack.isDead && this.sinner.isSad)) {
     setTimeout(() => {
       this.inventory.kill()
       this.game.state.start('end', false, false, 'evil')
@@ -24,7 +25,8 @@ module.exports = function () {
   }
 
   if ((this.lumberjack.isHappy && this.sinner.isDead) ||
-     (this.lumberjack.isDead && this.sinner.isHappy)) {
+     (this.lumberjack.isDead && this.sinner.isHappy) ||
+     (this.lumberjack.isHappy && this.sinner.isSad)) {
        setTimeout(() => {
          this.inventory.kill()
          this.game.state.start('end', false, false, 'regular')

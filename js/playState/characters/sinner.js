@@ -5,6 +5,7 @@ function Sinner (game, x, y) {
 
   this.animations.add('stop', [0]);
   this.animations.add('clap', [1, 2], 6, true);
+  this.animations.add('cry', [3]);
 
   this.game.physics.enable(this)
   this.body.collideWorldBounds = true

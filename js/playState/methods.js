@@ -81,8 +81,8 @@ PlayState._handleCollisions = function () {
 
   // bullets
   this.game.physics.arcade.collide(this.wrath.bullets, this.lumberjack, this.onBulletVsCharacter, null, this)
-  // this.game.physics.arcade.collide(this.wrath.bullets, this.cat, this.onBulletVsCharacter, null, this)
   this.game.physics.arcade.collide(this.wrath.bullets, this.sinner, this.onBulletVsCharacter, null, this)
+  this.game.physics.arcade.collide(this.wrath.bullets, this.cat, this.onBulletVsCat, null, this)
 
   // melt snow
   this.game.physics.arcade.collide(this.wrath.bullets, this.snow, this.onBulletVsSnow, null, this)
@@ -237,6 +237,13 @@ PlayState.onBulletVsSnow = function (character, bullet) {
     this.lumberjack.goFish()
     this._spawnAxe()
   }
+}
+
+PlayState.onBulletVsCat = function (character, bullet) {
+  this.onBulletVsCharacter(character, bullet)
+  this.sinner.animations.play('cry')
+  this.sinner.isSad = true
+  this.sinnerArea.kill()
 }
 
 PlayState.onGodVsAxe = function (god, axe) {
