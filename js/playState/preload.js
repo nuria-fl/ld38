@@ -11,6 +11,8 @@ const preload = function () {
   this.game.load.image('snow', 'assets/images/snow.png')
   this.game.load.image('water', 'assets/images/water.png')
   this.game.load.image('axe', 'assets/images/axe.png')
+  this.game.load.image('cloud1', 'assets/images/cloud1.png')
+  this.game.load.image('cloud2', 'assets/images/cloud2.png')
 
   this.game.load.audio('sfx:chop', 'assets/sound/chop.wav')
   this.game.load.audio('sfx:death', 'assets/sound/death.wav')
@@ -22,6 +24,7 @@ const preload = function () {
   this.game.load.spritesheet('lumberjack', 'assets/images/lumberjack.png', 72, 123)
   this.game.load.spritesheet('sinner', 'assets/images/sinner.png', 60, 141)
   this.game.load.spritesheet('cat', 'assets/images/cat.png', 42, 39)
+  this.game.load.spritesheet('inventory', 'assets/images/inventory.png', 213, 70)
 }
 
 module.exports = preload

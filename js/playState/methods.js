@@ -8,6 +8,16 @@ const PlayState = {}
 PlayState._loadLevel = function (data) {
   this.bgDecoration = this.game.add.group()
 
+  this.inventory = this.bgDecoration.create(727, 10, 'inventory')
+  this.inventory.animations.add('gotAxe', [1])
+  this.inventory.fixedToCamera = true
+
+  this.cloud1 = this.bgDecoration.create(110, 140, 'cloud1')
+  this.cloud2 = this.bgDecoration.create(630, 430, 'cloud2')
+
+  this.game.add.tween(this.cloud1).to({ y: '+30' }, 2500, Phaser.Easing.Linear.None, true, 0, -1, true)
+  this.game.add.tween(this.cloud2).to({ y: '-20' }, 2500, Phaser.Easing.Linear.None, true, 0, -1, true)
+
   this.mountain = this.bgDecoration.create(100, 1278, 'mountain')
   this.game.physics.enable(this.mountain)
   this.mountain.body.allowGravity = false
@@ -37,7 +47,10 @@ PlayState._loadLevel = function (data) {
   this.game.physics.enable(this.platform)
   this.platform.body.allowGravity = false
   this.platform.body.immovable = true
-  this.bgDecoration.create(50, 998, 'platform-grass')
+  this.grass = this.bgDecoration.create(50, 995, 'platform-grass')
+  this.game.physics.enable(this.grass)
+  this.game.add.tween(this.platform).to({ y: '+20' }, 2500, Phaser.Easing.Linear.None, true, 0, -1, true)
+
 
   this.tree = this.bgDecoration.create(100, 700, 'tree')
   this.game.physics.enable(this.tree)
@@ -58,6 +71,7 @@ PlayState._handleCollisions = function () {
   this.game.physics.arcade.collide(this.platform, this.sinner)
   this.game.physics.arcade.collide(this.platform, this.tree)
   this.game.physics.arcade.collide(this.platform, this.cat)
+  this.game.physics.arcade.collide(this.platform, this.grass)
   this.game.physics.arcade.collide(this.tree, this.cat)
   this.game.physics.arcade.collide(this.lumberjack, this.world)
 
@@ -227,6 +241,7 @@ PlayState.onBulletVsSnow = function (character, bullet) {
 
 PlayState.onGodVsAxe = function (god, axe) {
   god.hasAxe = true
+  this.inventory.animations.play('gotAxe')
   this.sfx.got.play();
   axe.kill()
 }
@@ -269,9 +284,11 @@ PlayState.onGodVsLumberjack = function () {
     if(this.keys.action.isDown) {
       this.lumberjackText.visible = true
       this.helpText.visible = false
+      this.inventory.visible = false
     } else {
       this.lumberjackText.visible = false
       this.helpText.visible = true
+      this.inventory.visible = true
     }
   }
 }
